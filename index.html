@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UMovie - Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <!--STYLES-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/templates.css" media="screen" title="no title">
+    <link rel="stylesheet" href="css/menu.css" media="screen" title="no title">
+</head>
+<body>
+
+<header id="navbar-container" class="container"></header>
+
+<div id="page-background-container" class="carousel"></div>
+
+<div id="page-wrapper" class="container-fluid"></div>
+
+<footer id="footer-container" class="container-fluid"></footer>
+
+<!---------------------------- TEMPLATES ----------------------------->
+
+<!-------------- template menu ------------->
+<script type="text/template" id="menu-tpl">
+    <nav class="navbar navbar-default">
+        <div id="navbar-container-fluid" class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" onclick="toggleNavbar()">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a id="uMovie" class="navbar-brand">UMOVIE <span class="glyphicon glyphicon-film"></span></a>
+            </div>
+            <div id="navbar-menu" class="navbar-collapse collapse">
+                <ul id="navbar-left" class="nav navbar-nav">
+                    <li><a id="home-menu" >home</a></li>
+                    <li><a id="watchlists-menu" >watchlists</a></li>
+                    <li><a id="movie-menu" >movie</a></li>
+                    <li><a id="tvshow-menu" >tvshow</a></li>
+                    <li><a id="actor-menu" >actor</a></li>
+                </ul>
+                <ul id="navbar-right" class="nav navbar-nav navbar-right">
+                    <li>
+                        <div class="form-inline" id="queryForm">
+                            <div class="form-group">
+                                <div class="input-group menu-ig">
+                                    <input type="text" class="form-control" id="query" placeholder="Search ...">
+                                    <div class="input-group-addon"><span class="glyphicon glyphicon-search" id="search"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li><a id="user-menu"><%= session.attributes.username %></a>
+                    <li><a href="#"><span class="glyphicon glyphicon-cog"></span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-log-out"></span></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</script>
+
+<!-------------- footer menu ------------->
+<script type="text/template" id="footer-tpl">
+    <div id="socialNetworks">
+        <a href="https://www.facebook.com/UMovie05" target="_blank">
+            <i class="fa fa-facebook-f"></i>
+        </a>
+        <a href="https://twitter.com/UMovie05" target="_blank">
+            <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://www.instagram.com/UMovie05/" target="_blank">
+            <i class="fa fa-instagram"></i>
+        </a>
+        <a href="https://plus.google.com/109262259021974879071" target="_blank">
+            <i class="fa fa-google-plus"></i>
+        </a>
+    </div>
+</script>
+
+<!-- template for home (index) -->
+<script id="indexTemplate" type="text/template">
+    <article>
+        <div id="random-actor" class="col-md-3 random-btn">
+            Get me to a not so random actor
+        </div>
+        <div id="random-tvshow" class="col-md-3 random-btn">
+            Get me to a not so random tvshow
+        </div>
+        <div id="random-movie" class="col-md-3 random-btn">
+            Get me to a not so random movie
+        </div>
+        <div id="random-watchlist" class="col-md-3 random-btn">
+            Get me to a not so random watchlist
+        </div>
+    </article>
+</script>
+
+<!-- template for a serie page -->
+<script id="serieTemplate" type="text/template">
+
+    <!-- FIRST ROW: contains title -->
+    <div class="row">
+        <div class="pages-item-container col-md-12">
+            <h3 class="title text-center"> <%= wrapper.collectionName %> </h3>
+        </div>
+    </div>
+    <!-- END OF FIRST ROW -->
+
+    <!-- SECOND ROW: contains image, rating, carousel of main informations and secondary informations -->
+    <div class="row">
+
+        <!-- IMAGE + RATING + ADD TO FAVORITES -->
+        <div class="pages-item-container col-md-3">
+            <div class="thumbnail col-md-12">
+                <img src="<%= wrapper.artworkUrl100 %>" class="img-rounded" alt="<%= wrapper.collectionName %>">
+
+                <div id="rateIt">
+                    <i class="fa fa-star" aria-hidden="true" title="-1- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-2- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-3- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-4- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-5- STARSs"></i>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-primary btn-responsive" style="width:100%">Add to favorites</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="pages-item-container col-md-6">
+            <div class="embed-responsive embed-responsive-16by9" style="min-height:350px">
+                <!--DYNAMIC CONTENT-->
+                <div class="main-informations-carousel-container">
+                    <div class="collectionTable" id="main-informations-carousel-option1" style="text-align: justify">
+                        <div><%= wrapper.longDescription %></div>
+                    </div>
+                    <div id="main-informations-carousel-option2"></div>
+
+                    <div id="main-informations-carousel-option3">
+                        <%= movieTitle_To_YoutubeLink(wrapper.collectionName) %>
+                        <iframe class="embed-responsive-item" id="previewYoutube" src="" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pages-item-container col-md-3" id="informationBox" >
+            <h4 class="title text-center">Informations</h4>
+            <table>
+                <colgroup>
+                    <col width="40%"> <col class="borderLeft" width="60%">
+                </colgroup>
+                <tr>
+                    <th class="paddingRight">Genre</th>
+                    <th class="paddingLeft"><%= wrapper.primaryGenreName %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Country</th>
+                    <th class="paddingLeft"><%= wrapper.country %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Release Date</th>
+                    <th class="paddingLeft"><%= release %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Advisory Rating</th>
+                    <th class="paddingLeft"><%= wrapper.contentAdvisoryRating %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Number of Episodes</th>
+                    <th class="paddingLeft"><%= wrapper.trackCount %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Price</th>
+                    <th class="paddingLeft"><%= wrapper.collectionPrice ? wrapper.collectionPrice : 'N/A' %> <%= wrapper.currency %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Price(HD)</th>
+                    <th class="paddingLeft"><%= wrapper.collectionHdPrice ? wrapper.collectionHdPrice : 'N/A' %> <%= wrapper.currency %></th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- END OF SECOND ROW -->
+
+    <!-- THIRD ROW: contains -->
+    <div class="row">
+        <!-- NAVIGATION TRAILER BAR -->
+        <div class="col-md-3">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary btn-responsive" style="width:100%">Recommend to a friend</button>
+            </div>
+        </div>
+        <div class="selection-bar-container col-md-6" >
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption1">About</div>
+            </div>
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption2">Episodes</div>
+            </div>
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption3">Trailer</div>
+            </div>
+        </div>
+
+        <!-- GET IT ON ITUNES -->
+        <div class="pages-item-container col-md-3 text-center">
+            <a href="<%= wrapper.collectionViewUrl %>" target="_blank">
+                <img src="content\images\Get_it_on_iTunes_Badge_US_1114.svg">
+            </a>
+        </div>
+    </div>
+</script>
+
+<!-- template for an actor page -->
+<script id="actorTemplate" type="text/template">
+
+    <!-- FIRST ROW: contains title -->
+    <div class="row">
+        <div class="pages-item-container col-md-12">
+            <h3 class="title text-center"><%= wrapper.artistName %></h3>
+        </div>
+    </div>
+    <!-- END OF FIRST ROW -->
+
+    <!-- SECOND ROW: contains image, rating, carousel of main informations and secondary informations -->
+    <div class="row">
+
+        <!-- IMAGE + RATING + ADD TO FAVORITES -->
+        <div class="pages-item-container col-md-3">
+            <div class="thumbnail col-md-12">
+                <img id="actorPictureGeneric" src="" class="img-rounded" alt="<%= wrapper.artistName %>">
+
+                <div id="rateIt">
+                    <i class="fa fa-star" aria-hidden="true" title="-1- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-2- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-3- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-4- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-5- STARSs"></i>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-primary btn-responsive" style="width:100%">Add to favorites</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="pages-item-container col-md-6">
+            <div class="embed-responsive embed-responsive-16by9" style="min-height:350px">
+                <!--DYNAMIC CONTENT-->
+                <div class="main-informations-carousel-container">
+                    <div class="collectionTable" id="main-informations-carousel-option1" style="text-align: justify"/>
+
+                    <div id="main-informations-carousel-option2"/>
+
+                    <div id="main-informations-carousel-option3"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="pages-item-container col-md-3" id="informationBox" >
+            <h4 class="title text-center">Informations</h4>
+            <table>
+                <colgroup>
+                    <col width="40%"> <col class="borderLeft" width="60%">
+                </colgroup>
+                <tr>
+                    <th class="paddingRight">Genre</th>
+                    <th class="paddingLeft"><%= wrapper.primaryGenreName %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Type</th>
+                    <th class="paddingLeft"><%= wrapper.artistType %></th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- END OF SECOND ROW -->
+
+    <!-- THIRD ROW: contains -->
+    <div class="row">
+        <!-- NAVIGATION TRAILER BAR -->
+        <div class="col-md-3">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary btn-responsive" style="width:100%">Recommend to a friend</button>
+            </div>
+        </div>
+        <div class="selection-bar-container col-md-6" >
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption1">Biography</div>
+            </div>
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption2">Filmography</div>
+            </div>
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption3">Popularity</div>
+            </div>
+        </div>
+
+        <!-- GET IT ON ITUNES -->
+        <div class="pages-item-container col-md-3 text-center">
+            <a href="<%= wrapper.artistLinkUrl %>" target="_blank">
+                <img src="content\images\Get_it_on_iTunes_Badge_US_1114.svg">
+            </a>
+        </div>
+    </div>
+</script>
+
+<!-- template for a movie page -->
+<script id="movieTemplate" type="text/template">
+
+    <!-- FIRST ROW: contains title -->
+    <div class="row">
+        <div class="pages-item-container col-md-12">
+            <h3 class="title text-center"><%= wrapper.trackCensoredName %></h3>
+        </div>
+    </div>
+    <!-- END OF FIRST ROW -->
+
+    <!-- SECOND ROW: contains image, rating, carousel of main informations and secondary informations -->
+    <div class="row">
+
+        <!-- IMAGE + RATING + ADD TO FAVORITES -->
+        <div class="pages-item-container col-md-3">
+            <div class="thumbnail col-md-12">
+                <img src="<%= wrapper.artworkUrl100 %>" class="img-rounded" alt="<%= wrapper.trackCensoredName %>">
+
+                <div id="rateIt">
+                    <i class="fa fa-star" aria-hidden="true" title="-1- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-2- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-3- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-4- STARS"></i>
+                    <i class="fa fa-star" aria-hidden="true" title="-5- STARSs"></i>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-primary btn-responsive" data-toggle="dropdown" style="width:100%">Add to watchlist</button>
+                    <ul class="dropdown-menu">
+                    <% _.each(userWatchlists, function(watchlist) { %>
+                        <li class="add-to-watchlist" id="<%= watchlist.id %>"><a class="watchlistsNames" href="#"><%= watchlist.name %></a></li>
+                    <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="pages-item-container col-md-6">
+            <div class="embed-responsive embed-responsive-16by9" style="min-height:350px">
+                <!--DYNAMIC CONTENT-->
+                <div class="main-informations-carousel-container">
+                    <div class="collectionTable" id="main-informations-carousel-option1" style="text-align: justify">
+                        <div><%= wrapper.longDescription %></div>
+                    </div>
+                    <div id="main-informations-carousel-option2">
+                        <div class="collectionTable">
+                            <table class="table-hover">
+                                <thead>
+                                <tr style="border-bottom:2px solid darkred;">
+                                    <th width="35%">Name</th>
+                                    <th width="20%" class="textCenter">Type</th>
+                                    <th width="35%" class="textCenter">Primary Genre</th>
+                                    <th width="10%">More</th>
+                                </tr>
+                                </thead>
+                                <tbody id="castList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="main-informations-carousel-option3">
+                        <%= movieTitle_To_YoutubeLink(wrapper.trackCensoredName) %>
+                        <iframe class="embed-responsive-item" id="previewYoutube" src="" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pages-item-container col-md-3" id="informationBox" >
+            <h4 class="title text-center">Informations</h4>
+            <table>
+                <colgroup>
+                    <col width="40%"> <col class="borderLeft" width="60%">
+                </colgroup>
+                <tr>
+                    <th class="paddingRight">Genre</th>
+                    <th class="paddingLeft"><%= wrapper.primaryGenreName %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Country</th>
+                    <th class="paddingLeft"><%= wrapper.country %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Release Date</th>
+                    <th class="paddingLeft"><%= release %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Advisory Rating</th>
+                    <th class="paddingLeft"><%= wrapper.contentAdvisoryRating %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Producer</th>
+                    <th class="paddingLeft"><%= wrapper.artistName %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Price</th>
+                    <th class="paddingLeft"><%= wrapper.collectionPrice ? wrapper.collectionPrice : 'N/A' %> <%= wrapper.currency %></th>
+                </tr>
+
+                <tr>
+                    <th class="paddingRight">Price(HD)</th>
+                    <th class="paddingLeft"><%= wrapper.collectionHdPrice ? wrapper.collectionHdPrice : 'N/A' %> <%= wrapper.currency %></th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- END OF SECOND ROW -->
+
+    <!-- THIRD ROW: contains -->
+    <div class="row">
+        <!-- NAVIGATION TRAILER BAR -->
+        <div class="col-md-3">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary btn-responsive" style="width:100%">Recommend to a friend</button>
+            </div>
+        </div>
+        <div class="selection-bar-container col-md-6" >
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption1">Description</div>
+            </div>
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption2">Actors</div>
+            </div>
+            <div class="selection-bar-option col-md-4 text-center">
+                <div id="navCarouselOption3">Trailer</div>
+            </div>
+        </div>
+
+        <!-- GET IT ON ITUNES -->
+        <div class="pages-item-container col-md-3 text-center">
+            <a href="<%= wrapper.trackViewUrl %>" target="_blank">
+                <img src="content\images\Get_it_on_iTunes_Badge_US_1114.svg">
+            </a>
+        </div>
+    </div>
+</script>
+
+<script id="episodeTemplate" type="text/template">
+    <modal-dialog>
+        <div> Your body/message </div>
+    </modal-dialog>
+</script>
+
+<!--template for displaying main-informations-carousel-option2 - EPISODES-->
+<script id="tvShowMainOption2Template" type="text/template">
+    <div class="modalEpisode"></div>
+
+    <div class="collectionTable">
+        <table class="table-hover">
+            <thead>
+            <tr style="border-bottom:2px solid darkred;">
+                <th width="4%"></th><th width="58%">Episode</th><th class="textCenter">Time</th><th class="textCenter">Price / HD</th><th width="10%">More</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% _.each(episodes, function(episode) { %>
+            <tr>
+                <td><section class="glyphicon glyphicon-play-circle"></section></td>
+                <td><%= episode.trackNumber %>
+                    <a class="movieLink" href="<%= '#/tvshows/seasons/' + episode.collectionId + '/episodes/' + episode.trackId %>">
+                        <%= episode.trackName %>
+                    </a>
+                </td>
+                <td align="center"><%= msToTime(episode.trackTimeMillis) %></td>
+                <td align="center"><%= episode.trackPrice ? episode.trackPrice : 'N/A' %> / <%= episode.trackHdPrice ? episode.trackHdPrice : 'N/A' %></td>
+                <td align="center">
+                    <a href="<%= episode.trackViewUrl %>" target="_blank">
+                        <section class="glyphicon glyphicon-share-alt"></section>
+                    </a>
+                </td>
+            </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<!--template for displaying main-informations-carousel-option2 - MOVIES-->
+<script id="actorMainOption2Template" type="text/template">
+    <div class="collectionTable">
+        <table class="table-hover">
+            <thead>
+            <tr style="border-bottom:2px solid darkred;">
+                <th width="4%"></th>
+                <th width="40%">Title</th>
+                <th width="25%" class="textCenter">Release Date</th>
+                <th width="21%" class="textCenter">Price / HD</th>
+                <th width="10%">More</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% _.each(movies, function(movie) { %>
+            <tr>
+                <td><section class="glyphicon glyphicon-play-circle"></section></td>
+                <td>
+                    <a class="movieLink" href="<%= '#/movies/' + movie.trackId %>">
+                        <%= movie.trackName %>
+                    </a>
+                </td>
+                <td><%= dateFormat(movie.releaseDate) %></td>
+                <td align="center"><%= movie.trackPrice ? movie.trackPrice : 'N/A' %> / <%=movie.trackHdPrice ? movie.trackHdPrice : 'N/A' %></td>
+                <td align="center">
+                    <a href="<%= movie.trackViewUrl %>" target="_blank">
+                        <section class="glyphicon glyphicon-share-alt"></section>
+                    </a>
+                </td>
+            </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script id="movies-watchlist-container" type="text/template">
+    <h1><%= wrapper.name %></h1>
+    <% _.each(wrapper.movies, function(movies) { %>
+        <div class="col-md-2 watchlist-movie" data-id="<%= movies.trackId %>">
+            <img src="<%= movies.artworkUrl100 %>" alt="<%= movies.trackCensoredName %>" />
+            <h4 class="textCenter"><%= movies.trackCensoredName %></h4>
+        </div>
+    <% }); %>
+</script>
+
+<!--template for displaying a specific watchlist-->
+<script id="watchlistTemplate" type="text/template">
+    <div id="display-watchlist" class="watchlist-container">
+    </div>
+</script>
+
+<!--template for displaying all watchlists-->
+<script id="watchlistsTemplate" type="text/template">
+    <div class="collectionTable">
+        <table class="table-hover">
+            <thead>
+            <tr style="border-bottom:2px solid darkred;">
+                <th width="50%">Name</th>
+                <th width="25%" class="textCenter">Number of movies</th>
+                <th width="25%" class="textCenter">Edit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% _.each(wrapper, function(watch) { %>
+            <tr>
+                <td>
+                    <a class="movieLink" href="<%= '#/watchlist/' + watch.id %>">
+                        <%= watch.name %>
+                    </a>
+                </td>
+                <td align="center"><%= watch.movies.length %></td>
+                <td align="center">
+                    <a href="<%= '#/editWatchlist/' + watch.id %>">
+                        <section class="glyphicon glyphicon-share-alt"></section>
+                    </a>
+                </td>
+            </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    </div>
+    <div style="margin: 0 0 20px 20px">
+        <a href="#/createWatchlist">
+            <button type="submit" class="btn btn-default">Add</button>
+        </a>
+    </div>
+</script>
+
+<!--template for displaying create whatchlist page-->
+<script id="createWatchlistTemplate" type="text/template">
+        <h2>Create a new whatchlist</h2>
+        <form id="create-watchlist-form">
+            <div class="form-group">
+                <label for="watchListName">Whatchlist Name:</label>
+                <input type="text" class="form-control" id="watchListName" placeholder="Enter watchlist name" name="name" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="ownerEmail">Owner's Email:</label>
+                <input type="email" class="form-control" id="ownerEmail" placeholder="Enter owner's email" name="owner" required autofocus>
+            </div>
+            <button type="submit" class="btn btn-default" id="submitCreateWatchlist">Create watchlist</button>
+        </form>
+</script>
+
+<!--template for editing a watchlist-->
+<script id="editWatchlistTemplate" type="text/template">
+    <%= watchlistId_To_WatchlistName(wrapper) %>
+    <h2>Edit whatchlist</h2>
+    <form id="editWatchlistForm">
+        <div class="form-group">
+            <label for="watchListEditName">Whatchlist Name:</label>
+            <input type="text" class="form-control" id="watchListEditName" value="" placeholder="Enter watchlist name" name="name" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-default save">Save</button>
+        <button type="button" class="btn btn-danger delete">Remove</button>
+    </form>
+</script>
+
+<!--template for the connection page-->
+<script id="connectionTemplate" type="text/template">
+    <div id="signUpForm">
+        <form class="signUp_main" id="<%= action %>-form">
+            <div class="col-xs-12" id="signUpForm_head">
+                <strong><%= action === "Login" ? "Login to your" : "Create an " %> UMovie Account</strong>
+            </div>
+            <div class="col-xs-12 hide alert alert-danger" id="signUpForm_error">
+                <strong>Error!</strong> <span id="error_message"></span>
+            </div>
+            <div class="col-xs-12">
+                <p id="user_exist"></p>
+                <% if (action === "SignUp") { %>
+                <label for="name">Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g., James Smith">
+                <% } %>
+                <label for="email">Email</label>
+                <input type="email" name="email" class="form-control" placeholder="e.g., smith@ulaval.ca">
+                <label for="password">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="e.g., ••••••••••••">
+                </br>
+                <% if (action === "SignUp") { %>
+                <input type="submit" id="btnCreateAccount" class="btn btn-success col-xs-12" value="Create New Account">
+                <p>Already have an account? <a href="#/login">Login</a></p>
+                <% } else { %>
+                <input type="submit" id="btnLogin" class="btn btn-success col-xs-12" value="Login">
+                <p>Don't have an account? <a href="#/signup">Sign Up</a></p>
+                <% } %>
+            </div>
+        </form>
+    </div>
+</script>
+
+<!--template for user page-->
+<script id="userPageTemplate" type="text/template">
+    <div class="userContainer">
+        <div class="user-form-container" >
+            <div class="panel panel-info col-md-10 col-md-offset-1">
+                <div class="panel-heading panel-heading-custom col-md-12">
+                    <h3 class="text-center">Hello <%= wrapper.name %> !</h3>
+                </div>
+                <div class="col-md-3" style="margin:20px 0" align="center">
+                    <div class="col-xs-12">
+                        <img class="gravatar-img" src="<%= accountEmail_to_Gravatar(wrapper.email) %>">
+                    </div>
+                    <div class="col-xs-12" style="margin-top: 10px">
+                        Follow : <b><%= user.following.length %></b>
+                    </div>
+
+                    <% if (user.id != me.id) {
+                        if (isFollowing == true) { %>
+                            <button id=follow-unfollow class="btn btn-primary" style="margin-top:10px;width:100%">Unfollow</button>
+                        <% } else { %>
+                            <button id=follow-unfollow class="btn btn-primary" style="margin-top:10px;width:100%">Follow</button>
+                        <% }}; %>
+                </div>
+                <div class="col-md-9" style="margin:20px 0">
+                    <table class="table table-user-information" style="border:none">
+                        <tbody>
+                            <tr>
+                                <td>Name</td>
+                                <td><%= wrapper.name %></td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td>
+                                    <a href="mailto:<%= wrapper.email %>"><%= wrapper.email %></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Friends list</td>
+                                <td>
+                                    <% _.each(user.following, function(ppl) { %>
+                                        <span><a class="following-list" data-id="<%= ppl._id%>"><%= ppl.name %></a></span>
+                                    <% }) %>
+                                    <!-- TODO: for each : friend > print it bitch ! -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-12" style="margin-bottom:20px">
+                    <h2 style="padding-bottom:10px;border-bottom:1px solid darkred"><%= wrapper.name %>'s watchlists</h2>
+                        <% _.each(wrapper.whatchlists, function(watchlist) { %>
+                            <h4><%= watchlist.name %>
+                        <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!--template for error-->
+<script id="notFoundErrorTemplate" type="text/template">
+    <div id="=notFoundError">
+        <div class="row">
+            <div class="col-xs-12" id="colorNotfound">
+                <h1><%=code%></h1>
+                <h3>Oh shoot!</h3>
+                <br>
+                <h4><%=message%></h4>
+                <br>
+                <br>
+                <a class="btn btn-danger" href="#">Back to home page</a>
+            </div>
+        </div>
+    </div>
+    <br>
+</script>
+
+<!--template for searchResult page-->
+<script id="searchResultTemplate" type="text/template">
+    <div class="col-lg-6">
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="searchChoice">Global search<span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a class="searchOption" href="#" id="searchInGlobal">Global</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a class="searchOption" href="#" id="searchInMovies">Movies</a></li>
+                    <li><a class="searchOption" href="#" id="searchInTVShows">TVShows</a></li>
+                    <li><a class="searchOption" href="#" id="searchInActors">Actors</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a class="searchOption" href="#" id="searchInUsers">Users</a></li>
+                </ul>
+            </div><!-- /btn-group -->
+            <input type="text" class="form-control" aria-label="..." id="specificQueryInput">
+        </div><!-- /input-group -->
+    </div><!-- /.col-lg-6 -->
+    <span class="dropdown" style="padding-left: 1.5%">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="selectedFilter" data-toggle="dropdown">Select a filter
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a class="filterOption" id="showAll" href="">Show all</a></li>
+                        <li class="divider"></li>
+                        <li><a class="filterOption" id="Comedy" href="">Comedy</a></li>
+                        <li><a class="filterOption" id="Drama" href="">Drama</a></li>
+                        <li class="divider"></li>
+                        <li><a class="filterOption" id="Horror" href="">Horror</a></li>
+                    </ul>
+                </span>
+    <div class="search-result">
+        <% if (moviesResults.length > 0) { %>
+        <div class="row movies-tag-band">
+            <h2>Movies</h2>
+        </div>
+        <div class="row">
+            <% _.each(moviesResults, function(movie) { %>
+            <div class="search-result-element">
+                <a class="search-result-movie" href="<%= '#/movies/' + movie.trackId %>">
+                    <img src="<%= movie.artworkUrl100 %>" class="" data-id="<%= movie.trackId %>">
+                    <div>
+                        <p><%= movie.trackName %></p>
+                    </div>
+                </a>
+            </div>
+            <% }); %>
+        </div>
+        <% } %>
+        <% if (tvshowsResults.length > 0) { %>
+        <div class="row movies-tag-band">
+            <h2>TV Shows</h2>
+        </div>
+        <div class="row">
+            <% _.each(tvshowsResults, function(tvshow) { %>
+            <div class="search-result-element">
+                <a class="search-result-movie" href="<%= '#/tvshows/seasons/' + tvshow.collectionId %>">
+                    <img src="<%= tvshow.artworkUrl100 %>" class="" data-id="<%= tvshow.collectionId %>">
+                    <div>
+                        <p><%= tvshow.collectionName %></p>
+                    </div>
+                </a>
+            </div>
+            <% }); %>
+        </div>
+        <% } %>
+        <% if (artistsResults.length > 0) { %>
+        <div class="row movies-tag-band">
+            <h2>Actors</h2>
+        </div>
+        <div class="row">
+            <% _.each(artistsResults, function(artist) { %>
+            <div class="search-result-element actor">
+                <a class="search-result-movie" href="<%= '#/actors/' + artist.artistId %>">
+                    <div>
+                        <img src="" id="actorPicture">
+                        <p><%= artist.artistName %></p>
+                    </div>
+                </a>
+            </div>
+            <% }); %>
+        </div>
+        <% } %>
+    </div>
+</script>
+
+<!--------------------------SCRIPTS INCLUDES-------------------------->
+<!-- BEGIN CORE PLUGINS -->
+<script src="js/lib/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-dateFormat/1.0/jquery.dateFormat.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+<script src="js/lib/jquery.base64.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.6.0/js/md5.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN UTILITIES SCRIPTS -->
+<script type="text/javascript" src="js/utilities/mainInformationsCarousel.js"></script>
+<script type="text/javascript" src="js/utilities/menu.js"></script>
+<script type="text/javascript" src="js/utilities/utils.js"></script>
+<!-- END UTILITIES SCRIPTS -->
+
+<!----- BEGIN APP SCRIPTS ----->
+<!-- MODELS -->
+<script src="js/models/actor.js"></script>
+<script src="js/models/episode.js"></script>
+<script src="js/models/movie.js"></script>
+<script src="js/models/signUp.js"></script>
+<script src="js/models/login.js"></script>
+<script src="js/models/tvshow.js"></script>
+<script src="js/models/user.js"></script>
+<script src="js/models/watchlist.js"></script>
+<script src="js/models/watchlists.js"></script>
+<script src="js/models/session.js"></script>
+
+<!-- COLLECTIONS -->
+<script src="js/collections/episodes.js"></script>
+<script src="js/collections/movies.js"></script>
+<script src="js/collections/watchlistCollection.js"></script>
+<script src="js/collections/searchable.js"></script>
+
+<!-- VIEWS -->
+<script src="js/views/actorInfo.js"></script>
+<script src="js/views/actorMovies.js"></script>
+<script src="js/views/createWatchlist.js"></script>
+<script src="js/views/editWatchlist.js"></script>
+<script src="js/views/episodeInfo.js"></script>
+<script src="js/views/index.js"></script>
+<script src="js/views/menuView.js"></script>
+<script src="js/views/footerView.js"></script>
+<script src="js/views/movieInfo.js"></script>
+<script src="js/views/connection.js"></script>
+<script src="js/views/tvShowEpisodes.js"></script>
+<script src="js/views/tvShowInfo.js"></script>
+<script src="js/views/watchlistInfo.js"></script>
+<script src="js/views/watchlistsInfo.js"></script>
+<script src="js/views/watchlistMovies.js"></script>
+<script src="js/views/searchResult.js"></script>
+<script src="js/views/userPage.js"></script>
+<script src="js/views/notFoundError.js"></script>
+<script src="js/views/findAutocomplete.js"></script>
+
+<!-- CORE -->
+<script src="js/app.js"></script>
+<script src="js/router.js"></script>
+<!------ END APP SCRIPTS ------>
+
+</body>
+</html>

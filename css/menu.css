@@ -1,0 +1,109 @@
+#navbar-container,
+#navbar-container-fluid {
+    z-index: 3;
+    background: black;
+    position: fixed;
+    height: 50px;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 303px;
+    height: 198px;
+    position: relative;
+    margin: 150px auto 30px;
+    -webkit-perspective: 1000px;
+    -moz-perspective: 1000px;
+    -ms-perspective: 1000px;
+    -o-perspective: 1000px;
+    perspective: 1000px;
+}
+
+#navbar-menu {
+    background: black;
+}
+
+#uMovie,
+#navbar-menu #navbar-left {
+    cursor: pointer;
+}
+
+.navbar {
+    background: black;
+    border: none;
+    width: 100vw;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-menu {
+    background: black;
+}
+
+.dropdown-menu li a {
+    color: #656565;
+}
+
+.navbar-default .navbar-brand {
+    padding-left: 50px;
+    font-size: 1.5em;
+    color: red;
+    font-weight: bold;
+}
+
+.navbar-default .navbar-brand:hover {
+    color: white;
+}
+
+#navbar-right, #navbar-left {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: darkred
+}
+
+#navbar-right li a:hover,
+#navbar-left li a:hover {
+    background: #d5d5d5;
+    color: red;
+}
+
+#navbar-left li {
+    border-left: 1px solid #353535;
+}
+
+#navbar-left li:nth-child(1) {
+    border: none;
+}
+
+form {
+    padding-top: 8px;
+}
+
+.menu-ig input {
+    border-radius: 0;
+    background: black;
+    border: 2px solid #353535;
+    outline: none;
+}
+
+.input-group-addon {
+    border-radius: 0;
+    border: 2px solid #353535;
+    background: black;
+    color: white;
+    cursor: pointer;
+}
+
+.form-inline {
+    padding-top: 8px;
+}
+
+.form-control::-webkit-input-placeholder { color: white; }
+.form-control:-moz-placeholder { color: white; }
+.form-control::-moz-placeholder { color: white; }
+.form-control:-ms-input-placeholder { color: white; }
